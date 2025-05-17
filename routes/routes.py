@@ -69,11 +69,10 @@ def post_ticker(coin: str, data: TickerModel):
 
 
 # PUT
-@router.put("/{coin}/ticker", response_model=TickerResponseModel)
+@router.put("/{coin}/ticker")
 def put_ticker(coin: str, data: TickerModel):
     if coin not in ALLOWED_TABLES:
         raise HTTPException(status_code=400, detail="Moeda inválida")
-    
     db = Database()
     db.conectar()
     try:
@@ -94,11 +93,14 @@ def put_ticker(coin: str, data: TickerModel):
         rows_affected = db.executar(sql, tuple(values))
         if rows_affected == 0:
             raise HTTPException(status_code=404, detail="Registro não encontrado")
-        return {"ticker": data}
+        return {"message": f"Ticker de {coin} atualizado com sucesso."}
     except Error as e:
         raise HTTPException(status_code=500, detail=f"Erro ao atualizar dados: {e}")
     finally:
         db.desconectar()
+
+
+
 
 
 # DELETE
